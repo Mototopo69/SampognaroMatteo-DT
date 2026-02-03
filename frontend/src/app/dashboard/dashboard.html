@@ -1,0 +1,26 @@
+<div class="container">
+  <h2>Delivery Dashboard</h2>
+  
+  <div class="cards-grid">
+    <div *ngFor="let item of deliveries()" class="card" [ngClass]="item.status">
+      
+      <div class="card-header">
+        <span class="tracking">{{ item.tracking_code }}</span>
+        <span class="badge" [class.high-priority]="item.priority === 'HIGH'">
+          {{ item.priority }}
+        </span>
+      </div>
+
+      <div class="card-body">
+        <h3>{{ item.recipient_name }}</h3>
+        <p>{{ item.address }}</p>
+        <p class="time-slot" *ngIf="item.time_slot">🕒 {{ item.time_slot }}</p>
+      </div>
+
+      <div class="card-footer">
+        Status: <strong>{{ item.status }}</strong>
+      </div>
+
+    </div>
+  </div>
+</div>
