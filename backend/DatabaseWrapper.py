@@ -2,7 +2,6 @@ import pymysql
 import os
 from dotenv import load_dotenv
 
-# Carica le variabili dal file .env
 load_dotenv()
 
 class DatabaseWrapper:
@@ -11,9 +10,8 @@ class DatabaseWrapper:
         self.user = os.getenv('DB_USER')
         self.password = os.getenv('DB_PASSWORD')
         self.db_name = os.getenv('DB_NAME')
-        self.port = os.getenv('DB_PORT')
+        self.port = int(os.getenv('DB_PORT', 3306))
         
-        # Creazione automatica della tabella all'avvio
         self.create_table()
 
     def get_connection(self):
@@ -28,10 +26,6 @@ class DatabaseWrapper:
         )
 
     def create_table(self):
-        """
-        Crea la tabella deliveries se non esiste.
-        Campi richiesti: tracking_code, destinatario, indirizzo, fascia oraria, stato, priorità.
-        """
         create_query = """
         CREATE TABLE IF NOT EXISTS deliveries (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -44,13 +38,41 @@ class DatabaseWrapper:
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
         """
-        
-        connection = self.get_connection()
+        conn = None
         try:
-            with connection.cursor() as cursor:
+            conn = self.get_connection()
+            with conn.cursor() as cursor:
                 cursor.execute(create_query)
-                print("Tabella 'deliveries' verificata/creata con successo.")
+                print("Tabella 'deliveries' verificata.")
         except Exception as e:
-            print(f"Errore creazione tabella: {e}")
+            print(f"Errore DB: {e}")
         finally:
-            connection.close()
+            if conn: conn.close()
+
+    # --- NUOVI METODI PER LE INTERAZIONI ---
+
+    def get_all_deliveries(self):
+        """Recupera tutte le consegne ordinate per data."""
+        conn = self.get_connection()
+        try:
+            with conn.cursor() as cursor:
+                sql = "SELECT * FROM deliveries ORDER BY created_at DESC"
+                cursor.execute(sql)
+                return cursor.fetchall()
+        finally:
+            conn.close()
+
+    def create_delivery(self, tracking, recipient, address, time_slot, priority):
+        """Inserisce una nuova consegna nel DB."""
+        conn = self.get_connection()
+        try:
+            with conn.cursor() as cursor:
+                sql = """
+                    INSERT INTO deliveries 
+                    (tracking_code, recipient_name, address, time_slot, priority, status)
+                    VALUES (%s, %s, %s, %s, %s, 'READY')
+                """
+                cursor.execute(sql, (tracking, recipient, address, time_slot, priority))
+                return True
+        finally:
+            conn.close()
