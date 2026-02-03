@@ -49,10 +49,7 @@ class DatabaseWrapper:
         finally:
             if conn: conn.close()
 
-    # --- NUOVI METODI PER LE INTERAZIONI ---
-
     def get_all_deliveries(self):
-        """Recupera tutte le consegne ordinate per data."""
         conn = self.get_connection()
         try:
             with conn.cursor() as cursor:
@@ -63,7 +60,6 @@ class DatabaseWrapper:
             conn.close()
 
     def create_delivery(self, tracking, recipient, address, time_slot, priority):
-        """Inserisce una nuova consegna nel DB."""
         conn = self.get_connection()
         try:
             with conn.cursor() as cursor:
@@ -73,6 +69,17 @@ class DatabaseWrapper:
                     VALUES (%s, %s, %s, %s, %s, 'READY')
                 """
                 cursor.execute(sql, (tracking, recipient, address, time_slot, priority))
+                return True
+        finally:
+            conn.close()
+
+    # --- NUOVO METODO PER COMMIT 6 ---
+    def update_status(self, delivery_id, new_status):
+        conn = self.get_connection()
+        try:
+            with conn.cursor() as cursor:
+                sql = "UPDATE deliveries SET status = %s WHERE id = %s"
+                cursor.execute(sql, (new_status, delivery_id))
                 return True
         finally:
             conn.close()

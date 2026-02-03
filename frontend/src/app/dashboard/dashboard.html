@@ -22,9 +22,21 @@
       </div>
 
       <div class="card-footer">
-        Status: <strong>{{ item.status }}</strong>
-      </div>
+        <p>Status: <strong>{{ item.status }}</strong></p>
+        
+        <div class="actions">
+          <button *ngIf="item.status === 'READY'" 
+                  (click)="updateStatus(item.id, 'OUT_FOR_DELIVERY')" 
+                  class="btn-go">
+            Partenza 🚚
+          </button>
 
-    </div>
+          <ng-container *ngIf="item.status === 'OUT_FOR_DELIVERY'">
+            <button (click)="updateStatus(item.id, 'DELIVERED')" class="btn-ok">Consegnato ✅</button>
+            <button (click)="updateStatus(item.id, 'FAILED')" class="btn-ko">Fallito ❌</button>
+          </ng-container>
+        </div>
+      </div>
+      </div>
   </div>
 </div>
