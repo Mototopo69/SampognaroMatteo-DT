@@ -1,6 +1,10 @@
 <div class="container">
   <h2>Delivery Dashboard</h2>
   
+  <app-delivery-form (deliveryCreated)="loadDeliveries()"></app-delivery-form>
+
+  <hr style="margin: 30px 0; border: 0; border-top: 1px solid #eee;">
+
   <div class="cards-grid">
     <div *ngFor="let item of deliveries()" class="card" [ngClass]="item.status">
       

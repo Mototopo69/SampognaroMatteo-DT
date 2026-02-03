@@ -1,0 +1,40 @@
+<div class="form-container">
+  <h3>Nuova Consegna</h3>
+  <form (ngSubmit)="onSubmit()">
+    
+    <div class="form-row">
+      <div class="form-group">
+        <label>Tracking Code *</label>
+        <input type="text" [(ngModel)]="newDelivery.tracking_code" name="tracking" placeholder="es. TRK-001" required>
+      </div>
+      
+      <div class="form-group">
+        <label>Destinatario *</label>
+        <input type="text" [(ngModel)]="newDelivery.recipient_name" name="recipient" placeholder="Nome Cognome" required>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Indirizzo</label>
+        <input type="text" [(ngModel)]="newDelivery.address" name="address" placeholder="Via, Città">
+      </div>
+      
+      <div class="form-group">
+        <label>Fascia Oraria</label>
+        <input type="text" [(ngModel)]="newDelivery.time_slot" name="time" placeholder="es. 14:00-16:00">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Priorità</label>
+      <select [(ngModel)]="newDelivery.priority" name="priority">
+        <option value="LOW">Bassa (Standard)</option>
+        <option value="MEDIUM">Media</option>
+        <option value="HIGH">Alta (Urgente)</option>
+      </select>
+    </div>
+
+    <button type="submit" class="btn-submit">Aggiungi Consegna</button>
+  </form>
+</div>

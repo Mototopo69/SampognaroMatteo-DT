@@ -2,18 +2,20 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DeliveryService } from '../delivery.service';
 import { Delivery } from '../delivery.interface';
+// IMPORTA IL FORM
+import { DeliveryFormComponent } from '../delivery-form/delivery-form';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  // AGGIUNGI DeliveryFormComponent AGLI IMPORTS
+  imports: [CommonModule, DeliveryFormComponent],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })
-export class Dashboard implements OnInit {
+export class DashboardComponent implements OnInit {
   private deliveryService = inject(DeliveryService);
 
-  // Utilizzo dei SIGNAL per gestire la lista
   deliveries = signal<Delivery[]>([]);
 
   ngOnInit(): void {
@@ -23,7 +25,6 @@ export class Dashboard implements OnInit {
   loadDeliveries() {
     this.deliveryService.getDeliveries().subscribe({
       next: (data) => {
-        // Aggiorno il valore del signal
         this.deliveries.set(data);
       },
       error: (err) => console.error('Errore recupero consegne:', err)
